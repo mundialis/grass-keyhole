@@ -79,7 +79,6 @@ from grass.script import core as gcore
 
 
 class TrThread(threading.Thread):
-
     def __init__(self, ifs, inf, outf):
         threading.Thread.__init__(self)
         self.ifs = ifs
@@ -91,7 +90,7 @@ class TrThread(threading.Thread):
             line = self.inf.readline()
             if not line:
                 break
-            line = line.replace(self.ifs, ' ')
+            line = line.replace(self.ifs, " ")
             line = encode(line)
             self.outf.write(line)
             self.outf.flush()
@@ -107,43 +106,46 @@ def main():
         sys.exit(1)
 
     # input group
-    group = options['group']
+    group = options["group"]
     # input nw
-    nw = options['nw']
+    nw = options["nw"]
     # input ne
-    ne = options['ne']
+    ne = options["ne"]
     # input sw
-    sw = options['sw']
+    sw = options["sw"]
     # input se
-    se = options['se']
+    se = options["se"]
     # input proj
-    projstring = options['proj']
+    projstring = options["proj"]
     # input flight height
-    height = float(options['height'])
+    height = float(options["height"])
     # input omega
     omega = 0
-    if options['omega']:
-        omega = float(options['omega'])
+    if options["omega"]:
+        omega = float(options["omega"])
 
     # check for cct
     have_cct = True
-    coordsep = ' '
-    if not gcore.find_program('cct'):
+    coordsep = " "
+    if not gcore.find_program("cct"):
         have_cct = False
-        coordsep = '\t'
-        if not gcore.find_program('proj'):
-            gcore.fatal(_(
-                "Neither cct nor proj program found, install PROJ first: \
-                https://proj.org"))
+        coordsep = "\t"
+        if not gcore.find_program("proj"):
+            gcore.fatal(
+                _(
+                    "Neither cct nor proj program found, install PROJ first: \
+                https://proj.org"
+                )
+            )
 
-    nw_east = float(nw.split(',')[0])
-    nw_north = float(nw.split(',')[1])
-    ne_east = float(ne.split(',')[0])
-    ne_north = float(ne.split(',')[1])
-    sw_east = float(sw.split(',')[0])
-    sw_north = float(sw.split(',')[1])
-    se_east = float(se.split(',')[0])
-    se_north = float(se.split(',')[1])
+    nw_east = float(nw.split(",")[0])
+    nw_north = float(nw.split(",")[1])
+    ne_east = float(ne.split(",")[0])
+    ne_north = float(ne.split(",")[1])
+    sw_east = float(sw.split(",")[0])
+    sw_north = float(sw.split(",")[1])
+    se_east = float(se.split(",")[0])
+    se_north = float(se.split(",")[1])
 
     # check south
     if sw_east > se_east:
@@ -181,13 +183,13 @@ def main():
     outf = sys.stdout
 
     if have_cct:
-        cmd = ['cct'] + ['-z0'] + ['-t0'] + projstring.split()
+        cmd = ["cct"] + ["-z0"] + ["-t0"] + projstring.split()
     else:
-        cmd = ['proj'] + projstring.split()
+        cmd = ["proj"] + projstring.split()
 
     p = gcore.Popen(cmd, stdin=gcore.PIPE, stdout=gcore.PIPE)
 
-    ifs = ' '
+    ifs = " "
     tr = TrThread(ifs, inf, p.stdin)
     tr.start()
 
@@ -196,7 +198,7 @@ def main():
     for line in p.stdout:
         try:
             # incredibly unfriendly output format of cct
-            line = re.sub(' +', ' ', decode(line).strip())
+            line = re.sub(" +", " ", decode(line).strip())
             outcoords = line.split(coordsep)
             x = outcoords[0]
             y = outcoords[1]
@@ -211,8 +213,7 @@ def main():
     p.wait()
 
     if p.returncode != 0:
-        gcore.warning(_(
-            "Projection transform probably failed, please investigate"))
+        gcore.warning(_("Projection transform probably failed, please investigate"))
 
     tan_omega = math.tan(math.radians(omega))
     ground_offset = height * tan_omega
@@ -229,8 +230,10 @@ def main():
     outf.write("camera north: %.2f\n\n" % camera_y)
 
     outf.write("Parameters for i.ortho.init:\n")
-    outf.write("i.ortho.init -r group=%s xc=%.2f yc=%.2f zc=%.2f omega=%.3f phi=0 kappa=%.3f xc_sd=1000 yc_sd=1000 zc_sd=1000 omega_sd=0.1 phi_sd=0.1 kappa_sd=0.1\n" %
-               (group, camera_x, camera_y, height, omega, kappa))
+    outf.write(
+        "i.ortho.init -r group=%s xc=%.2f yc=%.2f zc=%.2f omega=%.3f phi=0 kappa=%.3f xc_sd=1000 yc_sd=1000 zc_sd=1000 omega_sd=0.1 phi_sd=0.1 kappa_sd=0.1\n"
+        % (group, camera_x, camera_y, height, omega, kappa)
+    )
 
 
 if __name__ == "__main__":
