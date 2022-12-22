@@ -27,7 +27,7 @@ The described process was developed and tested using Linux Mint 20. It is in gen
 ## Data preparation
 **0)** Download the raw Keyhole Scene you would like to process and the vector file containing its rough extent and metadata from the USGS Earth Explorer.
 - if the vector dataset is not available yet:
-  - Browse https://earthexplorer.usgs.gov/ and navigate to the scene of interest using the ENTITY ID (enter the ENTITY ID in Step 3: "Additional Criteria"). Click at "Click here to export your results" (above the search results) to export a .zip-file with the vector dataset of the scene
+  - Browse https://earthexplorer.usgs.gov/ and navigate to the scene of interest using the ENTITY ID (in Step 2: "Data Sets" select Declass I for CORONA, Declass II for GAMBIT or Declass III for HEXAGON; enter the ENTITY ID in Step 3: "Additional Criteria"). Click at "Click here to export your results" (above the search results) to export a .zip-file with the vector dataset of the scene
   - Note: For some HEXAGON scenes there is no specific vector dataset that can be downloaded. Instead the .zip-file will contain footprints for all HEXAGON scenes around the world. To cut out only the desired footprint you need to open the attribute table of this dataset in e.g. QGIS, search for the desired footprint using the ENTITY ID of the scene and create a new layer that only contains this footprint. Save this layer as a vector dataset and continue at the step above.  
 
 **1)** Launch GRASS GIS and create a GRASS xy location, e.g. corona_xy (you can name it e.g. gambit_xy for GAMBIT scenes - Note: in the walkthrough below the location is always called corona_xy)
