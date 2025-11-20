@@ -47,5 +47,5 @@ while read LINE ; do
   
   fi
   counter=`expr $counter + 1`
-done < "$qgisgcpfile"
+done < "${qgisgcpfile}.clean"
 
